@@ -34,7 +34,7 @@ class HistoriaConfig():
         creds = {key: value for (key, value) in match}
 
         # standard Historia defaults...
-        default_port = 9998 if (network == 'mainnet') else 19998
+        default_port = 10100 if (network == 'mainnet') else 35776
 
         # use default port for network if not specified in historia.conf
         if not ('port' in creds):
