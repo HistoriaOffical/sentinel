@@ -4,9 +4,9 @@ An all-powerful toolset for Historia.
 
 [![Build Status](https://travis-ci.org/historia/sentinel.svg?branch=master)](https://travis-ci.org/historia/sentinel)
 
-Sentinel is an autonomous agent for persisting, processing and automating Historia governance objects and tasks, and for expanded functions in the upcoming Historia V13 release (Evolution).
+Sentinel is an autonomous agent for persisting, processing and automating Historia governance objects and tasks, and for expanded functions in the upcoming Historia releases.
 
-Sentinel is implemented as a Python application that binds to a local version 12 historiad instance on each Historia Masternode.
+Sentinel is implemented as a Python application that binds to a local version 16 historiad instance on each Historia Masternode.
 
 This guide covers installing Sentinel onto an existing Masternode in Ubuntu 14.04 / 16.04.
 
@@ -23,7 +23,7 @@ Update system packages and ensure virtualenv is installed:
     $ sudo apt-get update
     $ sudo apt-get -y install python-virtualenv
 
-Make sure the local Historia daemon running is at least version 12.1 (120100)
+Make sure the local Historia daemon running is at least version 16.0 (160000)
 
     $ historia-cli getinfo | grep version
 
@@ -31,7 +31,7 @@ Make sure the local Historia daemon running is at least version 12.1 (120100)
 
 Clone the Sentinel repo and install Python dependencies.
 
-    $ git clone https://github.com/historia/sentinel.git && cd sentinel
+    $ git clone https://github.com/HistoriaOffical/sentinel.git && cd sentinel
     $ virtualenv ./venv
     $ ./venv/bin/pip install -r requirements.txt
 
@@ -67,11 +67,11 @@ To view debug output, set the `SENTINEL_DEBUG` environment variable to anything 
 
 ## Contributing
 
-Please follow the [HistoriaCore guidelines for contributing](https://github.com/historia/historia/blob/master/CONTRIBUTING.md).
+Please follow the [HistoriaCore guidelines for contributing](https://github.com/HistoriaOffical/historia/blob/master/CONTRIBUTING.md).
 
 Specifically:
 
-* [Contributor Workflow](https://github.com/historia/historia/blob/master/CONTRIBUTING.md#contributor-workflow)
+* [Contributor Workflow](https://github.com/HistoriaOffical/historia/blob/master/CONTRIBUTING.md#contributor-workflow)
 
     To contribute a patch, the workflow is as follows:
 
