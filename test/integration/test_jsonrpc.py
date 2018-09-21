@@ -21,7 +21,7 @@ def test_historiad():
         if line.startswith('testnet=1'):
             network = 'testnet'
             is_testnet = True
-            genesis_hash = u'00000bafbc94add76cb75e2ec92894837288a481e5c005f6563d91623bf8bc2c'
+            genesis_hash = u'000008e378fa90a876bab78a957de006047db2725baf9ecdc96621cf6508ab7c'
 
     creds = HistoriaConfig.get_rpc_creds(config_text, network)
     historiad = HistoriaDaemon(**creds)
@@ -29,7 +29,7 @@ def test_historiad():
 
     assert hasattr(historiad, 'rpc_connection')
 
-    # Historia testnet block 0 hash == 00000bafbc94add76cb75e2ec92894837288a481e5c005f6563d91623bf8bc2c
+    # Historia testnet block 0 hash == 000008e378fa90a876bab78a957de006047db2725baf9ecdc96621cf6508ab7c
     # test commands without arguments
     info = historiad.rpc_command('getinfo')
     info_keys = [

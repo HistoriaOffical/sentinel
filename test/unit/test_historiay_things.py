@@ -7,12 +7,12 @@ sys.path.append(os.path.normpath(os.path.join(os.path.dirname(__file__), '../../
 
 @pytest.fixture
 def valid_historia_address(network='mainnet'):
-    return 'yYe8KwyaUu5YswSYmB3q3ryx8XTUu9y7Ui' if (network == 'testnet') else 'XpjStRH8SgA6PjgebtPZqCa9y7hLXP767n'
+    return 'Tm5AS3HzRqmVJw52KgkTah81gWWPFFWuBX' if (network == 'testnet') else 'HDymQPt3ejiYTskVSbDUh5SL4ukjERodf5'
 
 
 @pytest.fixture
 def invalid_historia_address(network='mainnet'):
-    return 'yYe8KwyaUu5YswSYmB3q3ryx8XTUu9y7Uj' if (network == 'testnet') else 'XpjStRH8SgA6PjgebtPZqCa9y7hLXP767m'
+    return 'Tm5AS3HzRqmVJw52KgkTah81gWWPFFWuBY' if (network == 'testnet') else 'HDymQPt3ejiYTskVSbDUh5SL4ukjERodf6'
 
 
 @pytest.fixture
