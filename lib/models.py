@@ -391,7 +391,6 @@ class Proposal(GovernanceClass, BaseModel):
                  .where(GovernanceObject.absolute_yes_count > proposal_quorum)
                  .order_by(GovernanceObject.absolute_yes_count.desc(), GovernanceObject.object_hash.desc())
                  )
-
         ranked = []
         for proposal in query:
             proposal.max_budget = next_superblock_max_budget

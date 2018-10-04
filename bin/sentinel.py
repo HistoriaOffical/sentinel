@@ -56,7 +56,7 @@ def attempt_superblock_creation(historiad):
     event_block_height = historiad.next_superblock_height()
 
     if Superblock.is_voted_funding(event_block_height):
-        # printdbg("ALREADY VOTED! 'til next time!")
+        printdbg("ALREADY VOTED! 'til next time!")
 
         # vote down any new SBs because we've already chosen a winner
         for sb in Superblock.at_height(event_block_height):
@@ -73,7 +73,12 @@ def attempt_superblock_creation(historiad):
     proposals = Proposal.approved_and_ranked(proposal_quorum=historiad.governance_quorum(), next_superblock_max_budget=historiad.next_superblock_max_budget())
     budget_max = historiad.get_superblock_budget_allocation(event_block_height)
     sb_epoch_time = historiad.block_height_to_epoch(event_block_height)
-
+    #printdbg("PROPOSALS" + proposals + "PEND")
+    x = len(proposals);
+    if (len(proposals) == 0):
+        printdbg("No proposals, cannot create an empty superblock.")
+    if (len(proposals) != 0):
+	print 'Proposals: ', x, ' Budget_max:', budget_max, ' Historiad Budget:', historiad.next_superblock_max_budget()
     maxgovobjdatasize = historiad.govinfo['maxgovobjdatasize']
     sb = historialib.create_superblock(proposals, event_block_height, budget_max, sb_epoch_time, maxgovobjdatasize)
     if not sb:
@@ -90,12 +95,6 @@ def attempt_superblock_creation(historiad):
             if not sb.voted_on(signal=VoteSignals.funding):
                 sb.vote(historiad, VoteSignals.delete, VoteOutcomes.yes)
 
-        printdbg("VOTED FUNDING FOR SB! We're done here 'til next superblock cycle.")
-        return
-    else:
-        printdbg("The correct superblock wasn't found on the network...")
-
-    # if we are the elected masternode...
     if (historiad.we_are_the_winner()):
         printdbg("we are the winner! Submit SB to network")
         sb.submit(historiad)
@@ -124,6 +123,20 @@ def is_historiad_port_open(historiad):
 def main():
     historiad = HistoriaDaemon.from_historia_conf(config.historia_conf)
     options = process_args()
+
+     # register a handler if SENTINEL_DEBUG is set
+    if os.environ.get('SENTINEL_DEBUG', None) or options.debug:
+        config.debug_enabled = True
+        import logging
+        logger = logging.getLogger('peewee')
+        logger.setLevel(logging.DEBUG)
+        logger.addHandler(logging.StreamHandler())
+    if options.config:
+        from historia_config import HistoriaConfig
+        config.sentinel_config_file = options.config
+        config.sentinel_cfg = HistoriaConfig.tokenize(options.config, True)
+     #dashd = DashDaemon.from_dash_conf(config.dash_conf)
+    historiad = HistoriaDaemon.from_historia_conf(config.historia_conf)
 
     # check historiad connectivity
     if not is_historiad_port_open(historiad):
@@ -202,6 +215,13 @@ def process_args():
                         action='store_true',
                         help='Bypass scheduler and sync/vote immediately',
                         dest='bypass')
+    parser.add_argument('-c', '--config',
+                        help='Path to sentinel.conf (default: ../sentinel.conf)',
+                        dest='config')
+    parser.add_argument('-d', '--debug',
+                       action='store_true',
+                       help='Enable debug mode',
+                       dest='debug')
     args = parser.parse_args()
 
     return args
@@ -227,3 +247,9 @@ if __name__ == '__main__':
     main()
 
     Transient.delete(mutex_key)
+#!/usr/bin/env python
+import sys
+import os
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(__file__), '../lib')))
+import init
+import config
