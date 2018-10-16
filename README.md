@@ -6,7 +6,7 @@ An all-powerful toolset for Historia.
 
 Sentinel is an autonomous agent for persisting, processing and automating Historia governance objects and tasks, and for expanded functions in the upcoming Historia releases.
 
-Sentinel is implemented as a Python application that binds to a local version 16 historiad instance on each Historia Masternode.
+Sentinel is implemented as a Python application that binds to a local version 16.1.0 historiad instance on each Historia Masternode.
 
 This guide covers installing Sentinel onto an existing Masternode in Ubuntu 14.04 / 16.04.
 
