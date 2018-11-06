@@ -23,7 +23,7 @@ Update system packages and ensure virtualenv is installed:
     $ sudo apt-get update
     $ sudo apt-get -y install python-virtualenv
 
-Make sure the local Historia daemon running is at least version 16.0 (160000)
+Make sure the local Historia daemon running is at least version 16.1 (160100)
 
     $ historia-cli getinfo | grep version
 
