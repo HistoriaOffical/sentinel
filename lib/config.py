@@ -11,8 +11,8 @@ default_sentinel_config = os.path.normpath(
 sentinel_config_file = os.environ.get('SENTINEL_CONFIG', default_sentinel_config)
 sentinel_cfg = HistoriaConfig.tokenize(sentinel_config_file)
 debug_enabled = os.environ.get('SENTINEL_DEBUG', None)
-sentinel_version = "1.2.0"
-min_historiad_proto_version_with_sentinel_ping = 70207
+sentinel_version = "1.2.1"
+min_historiad_proto_version_with_sentinel_ping = 70210
 
 
 def get_historia_conf():

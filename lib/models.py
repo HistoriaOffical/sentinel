@@ -127,11 +127,14 @@ class GovernanceObject(BaseModel):
         type_class_map = {
             1: Proposal,
             2: Superblock,
+            4: Proposal,
         }
-        subclass = type_class_map[dikt['type']]
-
-        # set object_type in govobj table
-        gobj_dict['object_type'] = subclass.govobj_type
+        if dikt['type'] == 4:
+		subclass = type_class_map[4]
+        	gobj_dict['object_type'] = 4
+	else:
+		subclass = type_class_map[dikt['type']]
+        	gobj_dict['object_type'] = subclass.govobj_type
 
         # exclude any invalid model data from historiad...
         valid_keys = subclass.serialisable_fields()
@@ -389,6 +392,7 @@ class Proposal(GovernanceClass, BaseModel):
                  .select(self, GovernanceObject)  # Note that we are selecting both models.
                  .join(GovernanceObject)
                  .where(GovernanceObject.absolute_yes_count > proposal_quorum)
+                 .where(GovernanceObject.object_type != 4)
                  .order_by(GovernanceObject.absolute_yes_count.desc(), GovernanceObject.object_hash.desc())
                  )
         ranked = []
@@ -396,6 +400,20 @@ class Proposal(GovernanceClass, BaseModel):
             proposal.max_budget = next_superblock_max_budget
             if proposal.is_valid():
                 ranked.append(proposal)
+        
+        now = misc.now()   
+        recquery = (self
+                 .select(self, GovernanceObject)  # Note that we are selecting both models.
+                 .join(GovernanceObject)
+                 .where(GovernanceObject.absolute_yes_count > proposal_quorum)
+                 .where(GovernanceObject.object_type == 4)
+                 .where(now - 3600 < GovernanceObject.object_creation_time)
+                 .order_by(GovernanceObject.absolute_yes_count.desc(), GovernanceObject.object_hash.desc())
+                 )
+        for record in recquery:
+            record.max_budget = next_superblock_max_budget
+            if record.is_valid():
+                ranked.append(record)
 
         return ranked
 
