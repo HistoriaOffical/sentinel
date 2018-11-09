@@ -407,7 +407,7 @@ class Proposal(GovernanceClass, BaseModel):
                  .join(GovernanceObject)
                  .where(GovernanceObject.absolute_yes_count > proposal_quorum)
                  .where(GovernanceObject.object_type == 4)
-                 .where(now - 3600 < GovernanceObject.object_creation_time)
+                 .where(now - 2678400 < GovernanceObject.object_creation_time)
                  .order_by(GovernanceObject.absolute_yes_count.desc(), GovernanceObject.object_hash.desc())
                  )
         for record in recquery:
