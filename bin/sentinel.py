@@ -78,7 +78,7 @@ def attempt_superblock_creation(historiad):
     if (len(proposals) == 0):
         printdbg("No proposals, cannot create an empty superblock.")
     if (len(proposals) != 0):
-	print 'Proposals: ', x, ' Budget_max:', budget_max, ' Historiad Budget:', historiad.next_superblock_max_budget()
+        print ('Proposals: ', x, ' Budget_max:', budget_max, ' Historiad Budget:', historiad.next_superblock_max_budget())
     maxgovobjdatasize = historiad.govinfo['maxgovobjdatasize']
     sb = historialib.create_superblock(proposals, event_block_height, budget_max, sb_epoch_time, maxgovobjdatasize)
     if not sb:
