@@ -1,9 +1,17 @@
 import sys
 import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'lib'))
+if getattr( sys, 'frozen', False ):
+    if sys._MEIPASS:
+        sys.path.append(os.path.join(sys._MEIPASS, '..'))
+        sys.path.append(os.path.join(sys._MEIPASS, '..', 'lib'))
+    else:
+        sys.path.append(os.path.join(sys.executable, '..'))
+        sys.path.append(os.path.join(sys.executable, '..', 'lib'))        
+else:
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'lib'))
 
-
+    
 def is_valid_python_version():
     version_valid = False
 
