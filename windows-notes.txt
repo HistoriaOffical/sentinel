@@ -1,0 +1,11 @@
+build using windows (10) in virtualbox
+-install python 3.7.1-amd64
+-install pywin32-224.win-amd64-py3.7
+-install pip-Win
+ change the interpreter path to correct one (e.g C:\Users\mot\AppData\Local\Programs\Python\Python37\python.dll)
+-install pyinstaller using pip-Win (pip for Windows)
+  instructions: https://pyinstaller.readthedocs.io/en/stable/installation.html#installing-in-windows
+-install dependencies with pip install -r requirements.txt
+-pyinstall command
+
+ pyinstaller --onefile --add-data=sentinel.conf;. --add-data=database\.keep;database bin\sentinel.py bin\dbtest.py bin\dehex.py bin\rehex.py lib\base58.py lib\config.py lib\constants.py lib\gobject_json.py lib\governance_class.py lib\historia_config.py lib\historiad.py lib\historialib.py lib\init.py lib\masternode.py lib\misc.py lib\models.py lib\scheduler.py -r "C:\Users\mot\AppData\Local\Programs\Python\Python37\python3.dll" -r  "C:\Users\mot\AppData\Local\Programs\Python\Python37\lib\site-packages\peewee.py" -r "C:\Users\mot\AppData\Local\Programs\Python\Python37\lib\site-packages\py" -r "C:\Users\mot\AppData\Local\Programs\Python\Python37\lib\site-packages\pycodestyle.py" -r "C:\Users\mot\AppData\Local\Programs\Python\Python37\lib\site-packages\pytest.py" -r "C:\Users\mot\AppData\Local\Programs\Python\Python37\lib\site-packages\bitcoinrpc" -r "C:\Users\mot\AppData\Local\Programs\Python\Python37\lib\site-packages\simplejson"
