@@ -130,11 +130,11 @@ class GovernanceObject(BaseModel):
             4: Proposal,
         }
         if dikt['type'] == 4:
-		subclass = type_class_map[4]
-        	gobj_dict['object_type'] = 4
-	else:
-		subclass = type_class_map[dikt['type']]
-        	gobj_dict['object_type'] = subclass.govobj_type
+            subclass = type_class_map[4]
+            gobj_dict['object_type'] = 4
+        else:
+            subclass = type_class_map[dikt['type']]
+            gobj_dict['object_type'] = subclass.govobj_type
 
         # exclude any invalid model data from historiad...
         valid_keys = subclass.serialisable_fields()

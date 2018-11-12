@@ -5,9 +5,16 @@ import sys
 import os
 from historia_config import HistoriaConfig
 
-default_sentinel_config = os.path.normpath(
-    os.path.join(os.path.dirname(__file__), '../sentinel.conf')
-)
+if getattr( sys, 'frozen', False ):
+    if sys._MEIPASS:
+        default_sentinel_config = os.path.join(sys._MEIPASS, 'sentinel.conf')
+    else:
+        default_sentinel_config = os.path.join(sys.executable, 'sentinel.conf')
+else:
+    default_sentinel_config = os.path.normpath(
+        os.path.join(os.path.dirname(__file__), '../sentinel.conf')
+        )
+    
 sentinel_config_file = os.environ.get('SENTINEL_CONFIG', default_sentinel_config)
 sentinel_cfg = HistoriaConfig.tokenize(sentinel_config_file)
 debug_enabled = os.environ.get('SENTINEL_DEBUG', None)
@@ -62,7 +69,12 @@ def get_db_conn():
             db_name = sqlite_test_db_name(db_name)
         else:
             db_name = "%s_test" % db_name
-
+    if getattr( sys, 'frozen', False ):
+        if sys._MEIPASS:
+            db_name = os.path.join(sys._MEIPASS, 'sentinel.db')
+        else:
+            db_name = os.path.join(sys.executable, 'sentinel.db')
+            
     peewee_drivers = {
         'mysql': peewee.MySQLDatabase,
         'postgres': peewee.PostgresqlDatabase,
