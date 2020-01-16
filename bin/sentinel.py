@@ -30,16 +30,7 @@ def prune_expired_proposals(historiad):
         proposal.vote(historiad, VoteSignals.delete, VoteOutcomes.yes)
 
 
-# ping historiad
-def sentinel_ping(historiad):
-    printdbg("in sentinel_ping")
-
-    historiad.ping()
-
-    printdbg("leaving sentinel_ping")
-
-
-def attempt_superblock_creation(historiad):
+def attempt_superblock_creation(dashd):
     import historialib
 
     if not historiad.is_masternode():
@@ -73,14 +64,8 @@ def attempt_superblock_creation(historiad):
     proposals = Proposal.approved_and_ranked(proposal_quorum=historiad.governance_quorum(), next_superblock_max_budget=historiad.next_superblock_max_budget())
     budget_max = historiad.get_superblock_budget_allocation(event_block_height)
     sb_epoch_time = historiad.block_height_to_epoch(event_block_height)
-    #printdbg("PROPOSALS" + proposals + "PEND")
-    x = len(proposals);
-    if (len(proposals) == 0):
-        printdbg("No proposals, cannot create an empty superblock.")
-    if (len(proposals) != 0):
-        print ('Proposals: ', x, ' Budget_max:', budget_max, ' Historiad Budget:', historiad.next_superblock_max_budget())
-    maxgovobjdatasize = historiad.govinfo['maxgovobjdatasize']
-    sb = historialib.create_superblock(proposals, event_block_height, budget_max, sb_epoch_time, maxgovobjdatasize)
+
+    sb = historialib.create_superblock(proposals, event_block_height, budget_max, sb_epoch_time)
     if not sb:
         printdbg("No superblock created, sorry. Returning.")
         return
@@ -124,23 +109,14 @@ def main():
     historiad = HistoriaDaemon.from_historia_conf(config.historia_conf)
     options = process_args()
 
-     # register a handler if SENTINEL_DEBUG is set
-    if os.environ.get('SENTINEL_DEBUG', None) or options.debug:
-        config.debug_enabled = True
-        import logging
-        logger = logging.getLogger('peewee')
-        logger.setLevel(logging.DEBUG)
-        logger.addHandler(logging.StreamHandler())
-    if options.config:
-        from historia_config import HistoriaConfig
-        config.sentinel_config_file = options.config
-        config.sentinel_cfg = HistoriaConfig.tokenize(options.config, True)
-     #dashd = DashDaemon.from_dash_conf(config.dash_conf)
-    historiad = HistoriaDaemon.from_historia_conf(config.historia_conf)
+    # print version and return if "--version" is an argument
+    if options.version:
+        print("Dash Sentinel v%s" % config.sentinel_version)
+        return
 
-    # check historiad connectivity
+    # check dashd connectivity
     if not is_historiad_port_open(historiad):
-        print("Cannot connect to historiad. Please ensure historiad is running and the JSONRPC port is open to Sentinel.")
+        print("Cannot connect to dashd. Please ensure dashd is running and the JSONRPC port is open to Sentinel.")
         return
 
     # check historiad sync
@@ -183,9 +159,6 @@ def main():
     # load "gobject list" rpc command data, sync objects into internal database
     perform_historiad_object_sync(historiad)
 
-    if historiad.has_sentinel_ping:
-        sentinel_ping(historiad)
-
     # auto vote network objects as valid/invalid
     # check_object_validity(historiad)
 
@@ -215,13 +188,10 @@ def process_args():
                         action='store_true',
                         help='Bypass scheduler and sync/vote immediately',
                         dest='bypass')
-    parser.add_argument('-c', '--config',
-                        help='Path to sentinel.conf (default: ../sentinel.conf)',
-                        dest='config')
-    parser.add_argument('-d', '--debug',
-                       action='store_true',
-                       help='Enable debug mode',
-                       dest='debug')
+    parser.add_argument('-v', '--version',
+                        action='store_true',
+                        help='Print the version (Historia Sentinel vX.X.X) and exit')
+
     args = parser.parse_args()
 
     return args

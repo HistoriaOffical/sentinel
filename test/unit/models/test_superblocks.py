@@ -233,9 +233,7 @@ def test_deterministic_superblock_creation(go_list_proposals):
     max_budget = 60
     prop_list = Proposal.approved_and_ranked(proposal_quorum=1, next_superblock_max_budget=max_budget)
 
-    # MAX_GOVERNANCE_OBJECT_DATA_SIZE defined in governance-object.h
-    maxgovobjdatasize = 16 * 1024
-    sb = historialib.create_superblock(prop_list, 72000, max_budget, misc.now(), maxgovobjdatasize)
+    sb = historialib.create_superblock(prop_list, 72000, max_budget, misc.now())
 
     assert sb.event_block_height == 72000
     assert sb.payment_addresses == 'TwBnvi9FfwBSuq5ck9LEG7i8ZfdEK55L3L|TwThXv2jrUuk4HG2YD2bxg1RUFzi4Fn4XQ'
@@ -247,6 +245,7 @@ def test_deterministic_superblock_creation(go_list_proposals):
     #assert sb.hex_hash() == 'bb3f33ccf95415c396bd09d35325dbcbc7b067010d51c7ccf772a9e839c1e414'
 
 
+<<<<<<< HEAD
 def test_superblock_size_limit(go_list_proposals):
     import historialib
     import misc
@@ -274,6 +273,8 @@ def test_superblock_size_limit(go_list_proposals):
     #assert sb.hex_hash() == '6b8cababf797644f1d62003e4cc68c1c40a8c1873c8a68ed0fc88772ea77cc44'
 
 
+=======
+>>>>>>> upstream/master
 def test_deterministic_superblock_selection(go_list_superblocks):
     from historiad import HistoriaDaemon
     historiad = HistoriaDaemon.from_historia_conf(config.historia_conf)
