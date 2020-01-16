@@ -30,7 +30,7 @@ def prune_expired_proposals(historiad):
         proposal.vote(historiad, VoteSignals.delete, VoteOutcomes.yes)
 
 
-def attempt_superblock_creation(dashd):
+def attempt_superblock_creation(historiad):
     import historialib
 
     if not historiad.is_masternode():
