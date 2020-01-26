@@ -31,6 +31,7 @@ db.connect()
 HISTORIAD_GOVOBJ_TYPES = {
     'proposal': 1,
     'superblock': 2,
+    'record':4,
 }
 GOVOBJ_TYPE_STRINGS = {
     1: 'proposal',
@@ -272,7 +273,7 @@ class Setting(BaseModel):
 class Proposal(GovernanceClass, BaseModel):
     governance_object = ForeignKeyField(GovernanceObject, related_name='proposals', on_delete='CASCADE', on_update='CASCADE')
     name = CharField(default='', max_length=40)
-    url = CharField(default='')
+    ipfscid = CharField(default='')
     start_epoch = IntegerField()
     end_epoch = IntegerField()
     payment_address = CharField(max_length=36)
@@ -324,13 +325,13 @@ class Proposal(GovernanceClass, BaseModel):
                 return False
 
             # URL
-            if (len(self.url.strip()) < 4):
-                printdbg("\tProposal URL [%s] too short, returning False" % self.url)
+            if (len(self.ipfscid.strip()) < 4):
+                printdbg("\tProposal IPFS CID [%s] too short, returning False" % self.ipfscid)
                 return False
 
             # proposal URL has any whitespace
-            if (re.search(r'\s', self.url)):
-                printdbg("\tProposal URL [%s] has whitespace, returning False" % self.name)
+            if (re.search(r'\s', self.ipfscid)):
+                printdbg("\tProposal IPFS [%s] has whitespace, returning False" % self.name)
                 return False
 
             # Historia Core restricts proposals to 512 bytes max
@@ -338,11 +339,11 @@ class Proposal(GovernanceClass, BaseModel):
                 printdbg("\tProposal [%s] is too big, returning False" % self.name)
                 return False
 
-            try:
-                parsed = urlparse.urlparse(self.url)
-            except Exception as e:
-                printdbg("\tUnable to parse Proposal URL, marking invalid: %s" % e)
-                return False
+            #try:
+            #    parsed = urlparse.urlparse(self.url)
+            #except Exception as e:
+            #    printdbg("\tUnable to parse Proposal URL, marking invalid: %s" % e)
+            #    return False
 
         except Exception as e:
             printdbg("Unable to validate in Proposal#is_valid, marking invalid: %s" % e.message)
