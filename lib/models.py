@@ -7,7 +7,7 @@ import time
 import datetime
 import re
 import simplejson
-from peewee import IntegerField, CharField, TextField, ForeignKeyField, DecimalField, DateTimeField
+from peewee import IntegerField, CharField, TextField, ForeignKeyField, DecimalField, DateTimeField, BooleanField
 import peewee
 import playhouse.signals
 import misc
@@ -71,6 +71,7 @@ class GovernanceObject(BaseModel):
     no_count = IntegerField(default=0)
     abstain_count = IntegerField(default=0)
     absolute_yes_count = IntegerField(default=0)
+    fPermLocked = BooleanField(default=False)
 
     class Meta:
         db_table = 'governance_objects'
@@ -109,7 +110,8 @@ class GovernanceObject(BaseModel):
         import gobject_json
 
         object_hash = rec['Hash']
-
+        fPermLocked = rec['fPermLocked']
+        
         gobj_dict = {
             'object_hash': object_hash,
             'object_fee_tx': rec['CollateralHash'],
@@ -117,6 +119,7 @@ class GovernanceObject(BaseModel):
             'abstain_count': rec['AbstainCount'],
             'yes_count': rec['YesCount'],
             'no_count': rec['NoCount'],
+            'fPermLocked': fPermLocked,
         }
 
         # deserialise and extract object
@@ -140,6 +143,7 @@ class GovernanceObject(BaseModel):
         # exclude any invalid model data from historiad...
         valid_keys = subclass.serialisable_fields()
         subdikt = {k: dikt[k] for k in valid_keys if k in dikt}
+        subdikt['fPermLocked'] = fPermLocked
 
         # get/create, then sync vote counts from historiad, with every run
         govobj, created = self.get_or_create(object_hash=object_hash, defaults=gobj_dict)
@@ -192,6 +196,10 @@ class GovernanceObject(BaseModel):
         # muck with the DB).
         if (self.object_hash == '0' or not misc.is_hash(self.object_hash)):
             printdbg("No governance object hash, nothing to vote on.")
+            return
+
+        if self.fPermLocked:
+            printdbg("fPermLocked is true for this governance object, not voting.")
             return
 
         # have I already voted on this gobject with this particular signal and outcome?
@@ -279,12 +287,12 @@ class Proposal(GovernanceClass, BaseModel):
     payment_address = CharField(max_length=36)
     payment_amount = DecimalField(max_digits=16, decimal_places=8)
     object_hash = CharField(max_length=64)
+    fPermLocked = BooleanField(default=False)
 
     # src/governance-validators.cpp
     MAX_DATA_SIZE = 512
 
     govobj_type = HISTORIAD_GOVOBJ_TYPES['proposal']
-
     class Meta:
         db_table = 'proposals'
 
@@ -294,6 +302,8 @@ class Proposal(GovernanceClass, BaseModel):
         printdbg("In Proposal#is_valid, for Proposal: %s" % self.__dict__)
 
         try:
+            fPermLocked = self.fPermLocked;
+        
             # proposal name exists and is not null/whitespace
             if (len(self.name.strip()) == 0):
                 printdbg("\tInvalid Proposal name [%s], returning False" % self.name)
@@ -358,6 +368,9 @@ class Proposal(GovernanceClass, BaseModel):
 
         if not superblockcycle:
             raise Exception("Required field superblockcycle missing.")
+        
+        if self.fPermLocked == "true":
+            return False
 
         printdbg("In Proposal#is_expired, for Proposal: %s" % self.__dict__)
         now = misc.now()
@@ -375,6 +388,7 @@ class Proposal(GovernanceClass, BaseModel):
         # valid proposal isn't excluded from SB by cutting it too close
         fully_expires_at = self.end_epoch + expiration_window_seconds
         printdbg("\tfully_expires_at = %s" % fully_expires_at)
+
 
         if (fully_expires_at < now):
             printdbg("\tProposal end_epoch [%s] < now [%s] , returning True" % (self.end_epoch, now))
@@ -394,6 +408,7 @@ class Proposal(GovernanceClass, BaseModel):
                  .join(GovernanceObject)
                  .where(GovernanceObject.absolute_yes_count > proposal_quorum)
                  .where(GovernanceObject.object_type != 4)
+                 .where(GovernanceObject.fPermLocked != 1)
                  .order_by(GovernanceObject.absolute_yes_count.desc(), GovernanceObject.object_hash.desc())
                  )
         ranked = []
@@ -409,6 +424,7 @@ class Proposal(GovernanceClass, BaseModel):
                  .where(GovernanceObject.absolute_yes_count > proposal_quorum)
                  .where(GovernanceObject.object_type == 4)
                  .where(now - 2678400 < GovernanceObject.object_creation_time)
+                 .where(GovernanceObject.fPermLocked != 1)
                  .order_by(GovernanceObject.absolute_yes_count.desc(), GovernanceObject.object_hash.desc())
                  )
         for record in recquery:
