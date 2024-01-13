@@ -290,7 +290,7 @@ class Proposal(GovernanceClass, BaseModel):
     fPermLocked = BooleanField(default=False)
 
     # src/governance-validators.cpp
-    MAX_DATA_SIZE = 512
+    MAX_DATA_SIZE = 1400
 
     govobj_type = HISTORIAD_GOVOBJ_TYPES['proposal']
     class Meta:
