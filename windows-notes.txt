@@ -1,11 +1,23 @@
-build using windows (10) in virtualbox
--install python 3.7.1-amd64
--install pywin32-224.win-amd64-py3.7
--install pip-Win
- change the interpreter path to correct one (e.g C:\Users\mot\AppData\Local\Programs\Python\Python37\python.dll)
--install pyinstaller using pip-Win (pip for Windows)
-  instructions: https://pyinstaller.readthedocs.io/en/stable/installation.html#installing-in-windows
--install dependencies with pip install -r requirements.txt
--pyinstall command
+Build in Windows
+1. Install Python 3.7.1 (64-bit):
+ - Download the Python 3.7.1 (64-bit) installer from the official Python website:  
+ - Python 3.7.1 (64-bit) Download
+ - Run the installer and follow the installation instructions.
+2. Install pywin32:
+ - Open a Command Prompt or PowerShell window.
+ - Use pip to install pywin32 by running the following command: pip install pywin32
+3. Install PyInstaller Using pip-Win:
+ - Open a Command Prompt or PowerShell window.
+ - Use pip-Win to install PyInstaller by running the following command: pip-Win install pyinstaller
+4. Install Dependencies from requirements.txt:
+- Make sure you have a requirements.txt file that lists all the project dependencies.
+- Open a Command Prompt or PowerShell window.
+- Navigate to your project directory.
+- Run the following command to install the dependencies: pip install -r requirements.txt
 
- pyinstaller --onefile --add-data=sentinel.conf;. --add-data=database\.keep;database bin\sentinel.py bin\dbtest.py bin\dehex.py bin\rehex.py lib\base58.py lib\config.py lib\constants.py lib\gobject_json.py lib\governance_class.py lib\historia_config.py lib\historiad.py lib\historialib.py lib\init.py lib\masternode.py lib\misc.py lib\models.py lib\scheduler.py -r "C:\Users\mot\AppData\Local\Programs\Python\Python37\python3.dll" -r  "C:\Users\mot\AppData\Local\Programs\Python\Python37\lib\site-packages\peewee.py" -r "C:\Users\mot\AppData\Local\Programs\Python\Python37\lib\site-packages\py" -r "C:\Users\mot\AppData\Local\Programs\Python\Python37\lib\site-packages\pycodestyle.py" -r "C:\Users\mot\AppData\Local\Programs\Python\Python37\lib\site-packages\pytest.py" -r "C:\Users\mot\AppData\Local\Programs\Python\Python37\lib\site-packages\bitcoinrpc" -r "C:\Users\mot\AppData\Local\Programs\Python\Python37\lib\site-packages\simplejson"
+5. Need to change config.py around line 70 to:
+    if getattr( sys, 'frozen', False ):
+        db_name = os.path.join('sentinel.db')
+6. Pyinstall command:
+
+pyinstaller.exe --onefile --add-data "sentinel.conf;." --add-data "database\.keep;database" bin\sentinel.py bin\dehex.py bin\rehex.py lib\base58.py lib\config.py lib\constants.py lib\gobject_json.py lib\governance_class.py lib\historia_config.py lib\historiad.py lib\historialib.py lib\init.py lib\masternode.py lib\misc.py lib\models.py lib\scheduler.py -r  C:\Users\<USERNAME>\AppData\Local\Programs\Python\Python37\lib\site-packages\peewee.py --paths "C:\Users\<USERNAME>\AppData\Local\Programs\Python\Python37\Lib\site-packages"
