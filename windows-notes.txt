@@ -15,7 +15,7 @@ Build in Windows
 - Navigate to your project directory.
 - Run the following command to install the dependencies: pip install -r requirements.txt
 
-5. Need to change config.py around line 70 to:
+5. Need to change config.py because of weird path issues around line 70 to:
     if getattr( sys, 'frozen', False ):
         db_name = os.path.join('sentinel.db')
 6. Pyinstall command:
